@@ -1,7 +1,6 @@
 const keepAlive = require('./keep_alive');
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion, makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
 const pino = require('pino');
-const readline = require('readline');
 const fs = require('fs');
 const path = require('path');
 
@@ -63,29 +62,25 @@ async function startBot() {
         logger: pino({ level: 'silent' })
     });
 
-    // ========== PAIRING CODE ==========
+    // ========== PAIRING CODE (RAILWAY FRIENDLY - TANPA INPUT) ==========
     if (!sock.authState.creds.registered) {
         console.log('\n📲 ==================================');
         console.log('🔐 METODE PAIRING CODE - WANG JASTEB');
         console.log('====================================');
         
-        const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout
-        });
+        // ⚠️ GANTI NOMOR DI BAWAH INI DENGAN NOMOR WA TUMBAL BOS (format: 628xxx)
+        const phoneNumber = '6283150287016'; // <--- GANTI NOMOR DI SINI
+        console.log(`📱 Menggunakan nomor: ${phoneNumber}`);
 
-        const phoneNumber = await new Promise(resolve => {
-            rl.question('📱 Masukkan nomor WhatsApp bot (contoh: 62812xxx): ', answer => {
-                rl.close();
-                resolve(answer.trim());
-            });
-        });
-
-        const code = await sock.requestPairingCode(phoneNumber);
-        console.log(`\n🔢 KODE PAIRING ANDA: ${code}`);
-        console.log('📌 Buka WhatsApp HP utama > Perangkat Tertaut > Tautkan Perangkat > Tautkan dengan Kode');
-        console.log('📌 Masukkan kode di atas.\n');
-        console.log('⏳ Menunggu koneksi...');
+        try {
+            const code = await sock.requestPairingCode(phoneNumber);
+            console.log(`\n🔢 KODE PAIRING ANDA: ${code}`);
+            console.log('📌 Buka WhatsApp HP > Perangkat Tertaut > Tautkan Perangkat');
+            console.log('📌 Pilih "Tautkan dengan Kode", lalu masukkan kode di atas.\n');
+            console.log('⏳ Menunggu koneksi...');
+        } catch (err) {
+            console.error('❌ Gagal mendapatkan pairing code:', err);
+        }
     }
 
     // ========== CONNECTION UPDATE ==========
@@ -147,7 +142,7 @@ async function startBot() {
 
                 case 'info':
                     await sock.sendMessage(sender, { 
-                        text: `📦 *INFO BOT*\n\nNama: ${BOT_NAME}\nPrefix: ${PREFIX}\nStatus: Online\nServer: Replit\n\nBot siap melayani orderan 24/7.` 
+                        text: `📦 *INFO BOT*\n\nNama: ${BOT_NAME}\nPrefix: ${PREFIX}\nStatus: Online\nServer: Railway\n\nBot siap melayani orderan 24/7.` 
                     });
                     break;
 
